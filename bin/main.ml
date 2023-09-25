@@ -14,6 +14,7 @@ let group_by_key kv_pairs =
         Hashtbl.replace table k (v :: existing_values)
     ) kv_pairs;
     table
+
 (* Parallel reduce function: Sum the values for each type *)
 let reduce_group key values = 
     key, (List.fold_left (+) 0 values)
@@ -21,6 +22,9 @@ let reduce_group key values =
 let parallel_reduce table = 
     let grouped = Hashtbl.fold (fun k v acc -> (k, v)::acc) table [] in
     Parmap.parmap ~ncores:4 (fun (k, vs) -> reduce_group k vs) (Parmap.L grouped)
+
+let compare_by_value (_, v1) (_, v2) =
+    compare v2 v1
 
 let () =
     if Array.length Sys.argv < 2 then
@@ -36,4 +40,5 @@ let () =
         let grouped = group_by_key mapped_values in
         let reduced = parallel_reduce grouped in
 
-        List.iter (fun (k, v) -> Printf.printf "Type: %s, Sum: %d\n" k v) reduced;
+        let sorted_results = List.sort compare_by_value reduced in
+        List.iter (fun (k, v) -> Printf.printf "Type: %s, Sum: %d\n" k v) sorted_results;
