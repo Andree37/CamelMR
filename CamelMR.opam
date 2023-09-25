@@ -9,9 +9,9 @@ maintainer: ["Andre Ribeiro"]
 authors: ["Andre Ribeiro"]
 license: "MIT"
 tags: ["topics" "to describe" "your" "project"]
-homepage: "https://github.com/username/reponame"
+homepage: "https://github.com/Andree37/CamelMR"
 doc: "https://url/to/documentation"
-bug-reports: "https://github.com/username/reponame/issues"
+bug-reports: "https://github.com/Andree37/CamelMR/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.10"}
@@ -31,4 +31,4 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://github.com/username/reponame.git"
+dev-repo: "git+https://github.com/Andree37/CamelMR.git"

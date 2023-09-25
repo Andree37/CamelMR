@@ -1,83 +1,39 @@
-let () = print_endline "Hello, World!"
+let input_file = Sys.argv.(1)
 
-type person = {
-  first_name : string;
-  last_name : string;
-  age : int;
-}
+(* Map function: Extract type and value *)
+let map line = 
+    let ty = List.nth line 1 in
+    let value = int_of_string (List.nth line 2) in
+    (ty, value)
 
-let richard = {
-  first_name = "Richard";
-  last_name = "Feynman";
-  age = 69;
-}
+(* Group by key *)
+let group_by_key kv_pairs = 
+    let table = Hashtbl.create 100 in
+    List.iter (fun (k, v) ->
+        let existing_values = try Hashtbl.find table k with Not_found -> [] in
+        Hashtbl.replace table k (v :: existing_values)
+    ) kv_pairs;
+    table
+(* Parallel reduce function: Sum the values for each type *)
+let reduce_group key values = 
+    key, (List.fold_left (+) 0 values)
 
-let s = richard.first_name ^ " " ^ richard.last_name ^ " is " ^ string_of_int richard.age ^ " years old";;
-print_endline s;;
+let parallel_reduce table = 
+    let grouped = Hashtbl.fold (fun k v acc -> (k, v)::acc) table [] in
+    Parmap.parmap ~ncores:4 (fun (k, vs) -> reduce_group k vs) (Parmap.L grouped)
 
-type colour = Red | Green | Blue;;
-let l = [Red; Green; Blue];;
-print_endline (string_of_int (List.length l));;
+let () =
+    if Array.length Sys.argv < 2 then
+        begin
+            Printf.printf "Usage: %s <path_to_csv>\n" Sys.argv.(0);
+            exit 1;
+        end
+    else
+        let ic = open_in input_file in
+        let csv = Csv.of_channel ic in
 
-type 'a tree = Leaf | Node of 'a tree * 'a * 'a tree;;
-let t =
-  Node (Node (Leaf, 1, Leaf), 2, Node (Node (Leaf, 3, Leaf), 4, Leaf));;
+        let mapped_values = Parmap.parmap ~ncores:4 map (Parmap.L (Csv.input_all csv)) in
+        let grouped = group_by_key mapped_values in
+        let reduced = parallel_reduce grouped in
 
-let rec total t: int = 
-  match t with
-  | Leaf -> 0
-  | Node (l, v, r) -> (total l) + v + total r;;
-
-let rec flip t = 
-  match t with
-  | Leaf -> Leaf
-  | Node (l, v, r) -> Node((flip r), v, (flip l));;
-
-let all = total t;;
-print_endline ("total of " ^ (string_of_int all));;
-
-let flipped = flip t;;
-print_endline ("is flipped: " ^ (string_of_bool (flipped = flip t)));;
-
-let list_find_opt p l = 
-  match List.find p l with
-  | v -> Some v
-  | exception Not_found -> None;;
-
-
-let found = list_find_opt (fun (a) -> a = 0) [0;2;3];;
-match found with
-| Some v -> print_int v
-| None -> print_string "nothing found";;
-
-print_newline
-
-let r = ref(0);;
-r := 100;
-print_int !r;;
-
-print_newline
-
-let n = 10;;
-for k = 0 to n do
-  print_int k;
-  print_newline ()
-done;;
-
-let smallest_power_of_two x =
-  let r = ref 1 in
-    while !r < x do
-      r := !r * 2
-    done;
-    !r;;
-
-print_string ("smallest power of two of: " ^ string_of_int 2 ^ " :" ^ (string_of_int (smallest_power_of_two 2)));;
-
-print_newline;;
-
-let arr = [|1;2;3|];;
-arr.(0);;
-
-arr.(0) <- 0;;
-
-arr;;
+        List.iter (fun (k, v) -> Printf.printf "Type: %s, Sum: %d\n" k v) reduced;

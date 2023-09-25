@@ -1,4 +1,4 @@
 (executable
  (public_name CamelMR)
  (name main)
- (libraries CamelMR))
+ (libraries CamelMR parmap csv))
