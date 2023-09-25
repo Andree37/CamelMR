@@ -7,6 +7,7 @@
 - Dune build system
 - `csv` OCaml library
 - `parmap` OCaml library
+- `alcotest` OCaml library
 
 ## Setup
 
