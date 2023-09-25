@@ -1,0 +1,14 @@
+(library
+ (name map_reduce)
+ (modules map_reduce)
+ (libraries parmap csv))
+
+(executable
+ (name main)
+ (modules main)
+ (libraries map_reduce parmap csv))
+
+(executable
+ (name test_camelmr)
+ (modules test_camelmr)
+ (libraries map_reduce parmap csv alcotest))
