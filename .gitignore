@@ -30,3 +30,6 @@ _opam/
 
 # Intelij
 .idea/
+
+# all the data files
+*.csv
