@@ -21,7 +21,7 @@ let group_by_key kv_pairs =
     ) kv_pairs;
     table
 
-(* Parallel reduce function: Sum the values for each type *)
+
 let reduce_group key values = 
     key, (List.fold_left (+) 0 values)
 
@@ -44,7 +44,6 @@ let () =
         let ic = open_in input_file in
         let csv = Csv.of_channel ic in
 
-        (* Get headers and find the target column index *)
         let headers = Csv.next csv in
         match find_column_index headers target_column_name with
         | None -> 

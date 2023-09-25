@@ -1,45 +1,57 @@
-# OCaml MapReduce Framework
+# CamelMR: A MapReduce-style CSV Processor in OCaml
 
-A versatile MapReduce engine implemented in OCaml, designed with flexibility in mind. This project uniquely allows users
-to define mapper and reducer functions in any programming language, providing a universal interface to harness the power
-of the MapReduce paradigm.
+**CamelMR** is a simple MapReduce-style program written in OCaml, designed to process CSV files. It reads a given CSV file, sums up values based on a specified key (e.g., "Finding Type"), and then prints the results, sorted by the sum in descending order.
 
-## Introduction
+## Prerequisites
+- OCaml
+- Dune build system
+- `csv` OCaml library
+- `parmap` OCaml library
 
-MapReduce is a popular programming model for processing and generating big data. This framework, though implemented in
-OCaml, allows both mapper and reducer functions to be written in any language, making it versatile for various
-applications.
+## Setup
 
-## Features
+1. Clone the repository:
 
-- Implemented in OCaml: Benefit from the functional programming aspects and strong type system of OCaml, ensuring a
-  robust and efficient engine.
-- Language Agnostic Mappers and Reducers: Users are not restricted to a specific language for their Map and Reduce
-  functions. This freedom allows for greater flexibility and lets developers use tools they are most familiar with.
-- Single Node Operations: Currently designed for single-node, in-memory operations, making it perfect for educational
-  purposes, testing, or lightweight data processing tasks.
+```bash
+git clone <repository-url>
+cd <repository-dir>
+```
 
-## Getting Started
+2. Install the required libraries:
 
-1. Setting Up:
-    - Clone this repository: `git clone https://github.com/Andree37/CamelMR`
-2. Writing Mappers and Reducers:
-    - Ensure your mapper and reducer scripts/programs read input data from stdin and write results to stdout.
-    - The scripts/programs can be written in any language, but they must be executable from the command line.
-3. Running Your MapReduce Job:
-    - Use the provided interface to specify your mapper and reducer executables and input data.
-    - Execute the engine to see the results!
+```bash
+opam install csv parmap dune
+```
 
-## Future Improvements
+3. Build the project:
 
-- Add distributed processing capabilities.
-- Incorporate fault tolerance and recovery mechanisms.
-- Enhance performance and optimize for larger datasets.
+```bash
+dune build
+```
 
-## Contribution
+## Usage
 
-Contributions are always welcome! Please read the contribution guidelines first.
+Run the program with the following command:
 
-## License
+```bash
+dune exec -- CamelMR <path_to_csv_file> <column_name_to_aggregate>
+```
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+Replace `<path_to_csv_file>` with the path to your desired CSV file.
+
+For example:
+
+```bash
+dune exec -- CamelMR data/sample.csv Name
+```
+
+## How it Works
+
+1. **Map**: The program reads the CSV file line by line, extracts the key (based on the specified column name like "Finding Type"), and its associated value.
+2. **Shuffle & Group**: It then groups the results by key.
+3. **Reduce**: For each key, it sums up its values in parallel.
+4. **Sort & Print**: Finally, it sorts the keys based on their summed values in descending order and prints the results.
+
+## Customization
+
+To focus on a different key or make other changes, modify the `main.ml` file in the `bin` directory and recompile.
