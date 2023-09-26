@@ -5,7 +5,7 @@ let pair_testable = Alcotest.testable (Fmt.Dump.pair Fmt.string Fmt.int) pair_eq
 let pair_list_testable = Alcotest.list pair_testable
 
 let map_test () =
-    let input = [["1"; "TypeA"; "5"]; ["2"; "TypeB"; "10"]; ["3"; "TypeA"; "2"]] in
+    let input = [["1"; "TypeA"; "a"]; ["2"; "TypeB"; "something"]; ["3"; "TypeA"; "other"]] in
     let expected_output = [("TypeA", 1); ("TypeB", 1); ("TypeA", 1)] in
 
     let map_fn = Map_reduce.create_map_function 1 in
