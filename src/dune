@@ -5,10 +5,12 @@
 
 (executable
  (name main)
+ (public_name CamelMR)
  (modules main)
  (libraries map_reduce parmap csv))
 
 (executable
  (name test_camelmr)
+ (public_name testCamelMR)
  (modules test_camelmr)
  (libraries map_reduce parmap csv alcotest))

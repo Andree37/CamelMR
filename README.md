@@ -21,7 +21,7 @@ cd <repository-dir>
 2. Install the required libraries:
 
 ```bash
-opam install csv parmap dune
+opam install csv parmap dune alcotest
 ```
 
 3. Build the project:
@@ -46,6 +46,12 @@ For example:
 dune exec -- CamelMR data/sample.csv Name
 ```
 
+You can also run the tests in `src/test_camelmr.ml` with 
+
+```bash
+dune exec -- testCamelMR
+```
+
 ## How it Works
 
 1. **Map**: The program reads the CSV file line by line, extracts the key (based on the specified column name like "Finding Type"), and its associated value.
@@ -55,4 +61,4 @@ dune exec -- CamelMR data/sample.csv Name
 
 ## Customization
 
-To focus on a different key or make other changes, modify the `main.ml` file in the `bin` directory and recompile.
+To focus on a different key or make other changes, modify the `main.ml` file in the `src` directory and recompile.

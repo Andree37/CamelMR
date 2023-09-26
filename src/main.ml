@@ -8,6 +8,8 @@ let () =
             exit 1;
         end
     else
+        let start_time = Unix.gettimeofday () in
+
         let ic = open_in input_file in
         let csv = Csv.of_channel ic in
 
@@ -24,3 +26,7 @@ let () =
 
             let sorted_results = List.sort Map_reduce.compare_by_value reduced in
             List.iter (fun (k, v) -> Printf.printf "Type: %s, Sum: %d\n" k v) sorted_results;
+
+        let end_time = Unix.gettimeofday () in
+        let elapsed_time = end_time -. start_time in
+        Printf.printf "\nElapsed time: %.3f seconds\n" elapsed_time;
