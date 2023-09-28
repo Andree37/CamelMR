@@ -30,3 +30,29 @@ let parallel_reduce table =
 let compare_by_value (_, v1) (_, v2) = 
   v2 - v1
   
+  let map_reduce input_file target_column_name =
+    let ic = open_in input_file in
+    let csv = Csv.of_channel ic in
+  
+    let headers = Csv.next csv in
+    match find_column_index headers target_column_name with
+    | None -> 
+        Printf.printf "Column name \"%s\" not found in CSV.\n" target_column_name;
+        exit 1;
+    | Some idx ->
+        let map_function = create_map_function idx in
+        let mapped_values_ref = ref [] in
+        let lines_read = ref 0 in
+        
+        Csv.iter ~f:(fun row ->
+            mapped_values_ref := (map_function row) :: !mapped_values_ref;
+            incr lines_read; 
+        ) csv;
+  
+        let grouped = group_by_key !mapped_values_ref in
+        let reduced: (string * int) list = parallel_reduce grouped in
+  
+        let sorted_results = List.sort compare_by_value reduced in
+        List.iter (fun (k, v) -> Printf.printf "Type: %s, Sum: %d\n" k v) sorted_results;
+        Printf.printf "Read %d lines\n" !lines_read;
+  

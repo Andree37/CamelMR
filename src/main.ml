@@ -1,33 +1,19 @@
 let input_file = Sys.argv.(1)
 let target_column_name = Sys.argv.(2)
+let mode = if Array.length Sys.argv > 3 then Sys.argv.(3) else "mapreduce"
 
 let () =
     if Array.length Sys.argv < 3 then
         begin
-            Printf.printf "Usage: %s <path_to_csv> <target_column_name>\n" Sys.argv.(0);
+            Printf.printf "Usage: %s <path_to_csv> <target_column_name> (optional)<mode>\n" Sys.argv.(0);
             exit 1;
         end
     else
         let start_time = Unix.gettimeofday () in
-
-        let ic = open_in input_file in
-        let csv = Csv.of_channel ic in
-
-        let headers = Csv.next csv in
-        match Map_reduce.find_column_index headers target_column_name with
-        | None -> 
-            Printf.printf "Column name \"%s\" not found in CSV.\n" target_column_name;
-            exit 1;
-        | Some idx ->
-            let map_function = Map_reduce.create_map_function idx in
-            let csv_list = Csv.input_all csv in
-            let mapped_values = Parmap.parmap ~ncores:4 map_function (Parmap.L (csv_list)) in
-            let grouped = Map_reduce.group_by_key mapped_values in
-            let reduced: (string * int) list = Map_reduce.parallel_reduce grouped in
-
-            let sorted_results = List.sort Map_reduce.compare_by_value reduced in
-            List.iter (fun (k, v) -> Printf.printf "Type: %s, Sum: %d\n" k v) sorted_results;
-            Printf.printf "Read %d lines" (List.length csv_list);
+        let _ = match mode with
+            | "simple" -> Simple_reduce.simple_reduce input_file target_column_name
+            | _ -> Map_reduce.map_reduce input_file target_column_name
+        in
 
         let end_time = Unix.gettimeofday () in
         let elapsed_time = end_time -. start_time in

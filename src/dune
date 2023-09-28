@@ -3,11 +3,21 @@
  (modules map_reduce)
  (libraries parmap csv))
 
+(library
+ (name simple_reduce)
+ (modules simple_reduce)
+ (libraries csv))
+
+(library
+ (name parallel_reduce)
+ (modules parallel_reduce)
+ (libraries parmap csv))
+
 (executable
  (name main)
  (public_name CamelMR)
  (modules main)
- (libraries map_reduce parmap csv))
+ (libraries map_reduce simple_reduce parmap csv))
 
 (executable
  (name test_camelmr)
