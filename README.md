@@ -35,7 +35,7 @@ dune build
 Run the program with the following command:
 
 ```bash
-dune exec -- CamelMR <path_to_csv_file> <column_name_to_aggregate>
+dune exec -- CamelMR <path_to_csv_file> <column_name_to_aggregate> (optional)<mode>
 ```
 
 Replace `<path_to_csv_file>` with the path to your desired CSV file.
@@ -44,6 +44,15 @@ For example:
 
 ```bash
 dune exec -- CamelMR data/sample.csv Name
+```
+
+You can also experiment with `simple`, `parallel` and `mapreduce`(default) runtimes that are provided.
+
+**By default the runtime is `mapreduce`**
+
+They ultimately do the same, but with different resource usages and can affect how long the script takes to run
+```bash
+dune exec -- CamelMR data/sample.csv Name simple
 ```
 
 You can also run the tests in `src/test_camelmr.ml` with 
