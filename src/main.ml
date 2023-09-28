@@ -20,13 +20,14 @@ let () =
             exit 1;
         | Some idx ->
             let map_function = Map_reduce.create_map_function idx in
-            let mapped_values = Parmap.parmap ~ncores:4 map_function (Parmap.L (Csv.input_all csv)) in
+            let csv_list = Csv.input_all csv in
+            let mapped_values = Parmap.parmap ~ncores:4 map_function (Parmap.L (csv_list)) in
             let grouped = Map_reduce.group_by_key mapped_values in
             let reduced: (string * int) list = Map_reduce.parallel_reduce grouped in
 
             let sorted_results = List.sort Map_reduce.compare_by_value reduced in
             List.iter (fun (k, v) -> Printf.printf "Type: %s, Sum: %d\n" k v) sorted_results;
-            Printf.printf "Read %d lines" (List.length mapped_values);
+            Printf.printf "Read %d lines" (List.length csv_list);
 
         let end_time = Unix.gettimeofday () in
         let elapsed_time = end_time -. start_time in
