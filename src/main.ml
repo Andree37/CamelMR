@@ -26,6 +26,7 @@ let () =
 
             let sorted_results = List.sort Map_reduce.compare_by_value reduced in
             List.iter (fun (k, v) -> Printf.printf "Type: %s, Sum: %d\n" k v) sorted_results;
+            Printf.printf "Read %d lines" (List.length mapped_values);
 
         let end_time = Unix.gettimeofday () in
         let elapsed_time = end_time -. start_time in
