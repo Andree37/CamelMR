@@ -17,7 +17,7 @@
  (name main)
  (public_name CamelMR)
  (modules main)
- (libraries map_reduce simple_reduce parmap csv))
+ (libraries map_reduce simple_reduce parallel_reduce parmap csv))
 
 (executable
  (name test_camelmr)

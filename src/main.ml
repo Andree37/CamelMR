@@ -12,6 +12,7 @@ let () =
         let start_time = Unix.gettimeofday () in
         let _ = match mode with
             | "simple" -> Simple_reduce.simple_reduce input_file target_column_name
+            | "parallel" -> Parallel_reduce.parallel_reduce input_file target_column_name 20000 (* this value depends on the available ram *)
             | _ -> Map_reduce.map_reduce input_file target_column_name
         in
 
