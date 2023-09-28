@@ -48,7 +48,7 @@ dune exec -- CamelMR data/sample.csv Name
 
 You can also experiment with `simple`, `parallel` and `mapreduce`(default) runtimes that are provided.
 
-**By default the runtime is `mapreduce`**
+**By default the runtime is `mapreduce`** but you can find a lot of performance boost with **simple** if your dataset is small.
 
 They ultimately do the same, but with different resource usages and can affect how long the script takes to run
 ```bash

@@ -2,40 +2,6 @@
 opam-version: "2.0"
 synopsis: "A versatile MapReduce engine implemented in OCaml"
 description: """
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 This project uniquely allows users
                to define mapper and reducer functions in any programming language, providing a universal interface to harness the power
                of the MapReduce paradigm."""

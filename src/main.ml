@@ -14,8 +14,8 @@ let () =
             | "simple" -> Simple_reduce.simple_reduce input_file target_column_name
             | "parallel" -> Parallel_reduce.parallel_reduce input_file target_column_name 20000 (* this value depends on the available ram *)
             | _ -> Map_reduce.map_reduce input_file target_column_name
-        in
+         in
 
         let end_time = Unix.gettimeofday () in
         let elapsed_time = end_time -. start_time in
-        Printf.printf "\nElapsed time: %.3f seconds\n" elapsed_time;
+        Printf.printf "\nElapsed time: %.3f seconds\n" elapsed_time
