@@ -39,6 +39,5 @@ let map_reduce input_file target_column_name =
     let sorted_results = List.sort compare_by_value reduced in
 
     List.iter (fun (k, v) -> Printf.printf "Type: %s, Sum: %d\n" k v) sorted_results;
-    Printf.printf "Read %d lines\n" (Hashtbl.length table);
     
     close_in ic;

@@ -15,10 +15,8 @@ let simple_reduce input_file target_column_name =
       Printf.printf "Column name \"%s\" not found in CSV.\n" target_column_name;
       exit 1;
   | Some idx ->  
-      let lines_read = ref 0 in
       let count_table = Hashtbl.create 100 in
       Csv.iter ~f:(fun row ->
-          incr lines_read;
 
           let column_value = List.nth row idx in
           let count = Hashtbl.find_opt count_table column_value in
@@ -34,4 +32,4 @@ let simple_reduce input_file target_column_name =
           |> List.sort (fun (_, v1) (_, v2) -> v2 - v1) 
       in
       List.iter (fun (k, v) -> Printf.printf "Type: %s, Count: %d\n" k v) sorted_results;
-      Printf.printf "Read %d lines\n" !lines_read;
+

@@ -18,7 +18,7 @@ let merge_tables tables =
     ) tables;
     merged
 
-let parallel_reduce input_file target_column_name batch_size =
+let parallel_reduce input_file target_column_name =
     let ic = open_in input_file in
     let csv = Csv.of_channel ic in
 
@@ -28,7 +28,6 @@ let parallel_reduce input_file target_column_name batch_size =
         Printf.printf "Column name \"%s\" not found in CSV.\n" target_column_name;
         exit 1;
     | Some idx ->  
-        let lines_read = ref 0 in
         let batch = ref [] in
         let all_results = ref [] in
 
@@ -46,13 +45,11 @@ let parallel_reduce input_file target_column_name batch_size =
 
         Csv.iter ~f:(fun row ->
             batch := row :: !batch;
-            incr lines_read;
 
-            if !lines_read mod batch_size = 0 then (
-                let results = Parmap.parmap ~ncores:4 process_batch (Parmap.L [!batch]) in
-                all_results := results @ !all_results;
-                batch := [];
-            )
+            let results = Parmap.parmap ~ncores:4 process_batch (Parmap.L [!batch]) in
+            all_results := results @ !all_results;
+            batch := [];
+            
         ) csv;
 
         (* Process the last batch if it's not empty *)
@@ -70,6 +67,5 @@ let parallel_reduce input_file target_column_name batch_size =
         in
 
         List.iter (fun (k, v) -> Printf.printf "Type: %s, Count: %d\n" k v) sorted_results;
-        Printf.printf "Read %d lines\n" !lines_read;
 
     
