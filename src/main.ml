@@ -13,6 +13,7 @@ let () =
         let _ = match mode with
             | "simple" -> Simple_reduce.simple_reduce input_file target_column_name
             | "parallel" -> Parallel_reduce.parallel_reduce input_file target_column_name
+            | "supported" -> Supported_nodes.analyze_csv input_file target_column_name "children"
             | _ -> Map_reduce.map_reduce input_file target_column_name
          in
 

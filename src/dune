@@ -8,6 +8,17 @@
  (modules simple_reduce)
  (libraries csv))
 
+; supported types have to be defined with a single variable: `supported_types` which is an array of strings with all the current supported types
+
+(library
+ (name supported_types)
+ (modules supported_types))
+
+(library
+ (name supported_nodes)
+ (modules supported_nodes)
+ (libraries supported_types csv str))
+
 (library
  (name parallel_reduce)
  (modules parallel_reduce)
@@ -17,7 +28,13 @@
  (name main)
  (public_name CamelMR)
  (modules main)
- (libraries map_reduce simple_reduce parallel_reduce parmap csv))
+ (libraries
+  map_reduce
+  supported_nodes
+  simple_reduce
+  parallel_reduce
+  parmap
+  csv))
 
 (executable
  (name test_camelmr)

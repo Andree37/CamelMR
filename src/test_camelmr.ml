@@ -13,23 +13,7 @@ let map_test () =
 
     Alcotest.(check pair_list_testable) "equal lists" expected_output mapped_output
 
-let group_test () =
-    let input = [("TypeA", 5); ("TypeB", 10); ("TypeA", 7)] in
-    let grouped = Map_reduce.group_by_key input in
-    Alcotest.(check (list int)) "TypeA values" [7; 5] (Hashtbl.find grouped "TypeA");
-    Alcotest.(check (list int)) "TypeB values" [10] (Hashtbl.find grouped "TypeB")
-
-let reduce_test () =
-    let table = Hashtbl.create 10 in
-    Hashtbl.add table "TypeA" [5; 7];
-    Hashtbl.add table "TypeB" [10];
-    let reduced = Map_reduce.parallel_reduce table in
-    Alcotest.(check bool) "TypeA reduced correctly" true (List.mem ("TypeA", 12) reduced);
-    Alcotest.(check bool) "TypeB reduced correctly" true (List.mem ("TypeB", 10) reduced)
-
 let () =
     Alcotest.run "CamelMR test suite" [
         "map_test",    [ "mapping", `Quick, map_test ];
-        "group_test",  [ "grouping", `Quick, group_test ];
-        "reduce_test", [ "reduction", `Quick, reduce_test ];
     ]

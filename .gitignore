@@ -34,3 +34,6 @@ _opam/
 
 # all the data files
 *.csv
+
+# secret supported types
+supported_types.ml
