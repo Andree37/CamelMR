@@ -6,10 +6,16 @@ let find_column_index headers column_name =
   with Not_found -> None
                       
 let extract_types str =
-  let re = Str.regexp ".*<\\(.*\\)>.*" in
-  if Str.string_match re str 0 then
-    Str.matched_group 1 str |> String.split_on_char ' ' |> List.filter (fun s -> not (List.mem s Supported_types.supported_types))
-  else []
+  let re = Str.regexp "<\\(I[^>]+\\)>" in
+  let results = ref [] in
+  let _ = try 
+      while true do
+        let _ = Str.search_forward re str (if List.length !results = 0 then 0 else Str.match_end ()) in
+        results := (Str.matched_group 1 str) :: !results
+      done
+    with Not_found -> ()
+  in
+  List.filter (fun s -> not (List.mem s Supported_types.supported_types)) (List.rev !results)
 
 
 let analyze_csv input_file supported_column_name children_column_name =
