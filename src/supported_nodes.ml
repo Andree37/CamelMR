@@ -54,9 +54,9 @@ let analyze_csv input_file supported_column_name children_column_name =
 
   Csv.iter ~f:analyze_row csv;
 
-  Printf.printf "Supported: %d\n" !supported_counter;
-  Printf.printf "Unsupported: %d\n" !unsupported_counter;
-  Printf.printf "Counts of Unsupported Types:\n";
+  Printf.printf "Supported Actions: %d\n" !supported_counter;
+  Printf.printf "Unsupported Actions: %d\n" !unsupported_counter;
+  Printf.printf "Counts of Unsupported Nodes (elements inside Actions):\n";
   Hashtbl.iter (fun key value -> Printf.printf "%s: %d\n" key value) unsupported_types_counter;
 
   close_in ic;
