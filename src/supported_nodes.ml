@@ -15,8 +15,7 @@ let extract_types str =
       done
     with Not_found -> ()
   in
-  List.filter (fun s -> not (List.mem s Supported_types.supported_types)) (List.rev !results)
-
+  List.rev !results
 
 let analyze_csv input_file supported_column_name children_column_name =
   let ic = open_in input_file in
@@ -36,19 +35,31 @@ let analyze_csv input_file supported_column_name children_column_name =
   
   let supported_counter = ref 0 in
   let unsupported_counter = ref 0 in
-  let unsupported_types_counter = Hashtbl.create 100 in
-  
+  let unsupported_types_counter = Hashtbl.create 100 in  
+  let supported_types_counter = Hashtbl.create 100  in
+
   let analyze_row row =
     let supported_str = List.nth row supported_idx in
     let children_str = List.nth row children_idx in
+    let node_types = extract_types children_str in
+    
     match String.lowercase_ascii supported_str with
-    | "true" -> incr supported_counter
+    | "true" -> 
+        incr supported_counter;
+        List.iter (fun t ->
+            if List.mem t Supported_types.supported_types then (
+                let prev_count = try Hashtbl.find supported_types_counter t with Not_found -> 0 in
+                Hashtbl.replace supported_types_counter t (prev_count + 1)
+            )
+          ) node_types
     | "false" ->
-      incr unsupported_counter;
-      List.iter (fun t ->
-          let prev_count = try Hashtbl.find unsupported_types_counter t with Not_found -> 0 in
-          Hashtbl.replace unsupported_types_counter t (prev_count + 1)
-        ) (extract_types children_str)
+        incr unsupported_counter;
+        List.iter (fun t ->
+            if not (List.mem t Supported_types.supported_types) then (
+                let prev_count = try Hashtbl.find unsupported_types_counter t with Not_found -> 0 in
+                Hashtbl.replace unsupported_types_counter t (prev_count + 1)
+            )
+          ) node_types
     | _ -> ()
   in
 
@@ -58,5 +69,8 @@ let analyze_csv input_file supported_column_name children_column_name =
   Printf.printf "Unsupported Actions: %d\n" !unsupported_counter;
   Printf.printf "Counts of Unsupported Nodes (elements inside Actions):\n";
   Hashtbl.iter (fun key value -> Printf.printf "%s: %d\n" key value) unsupported_types_counter;
+
+  Printf.printf "Counts of Supported Nodes (elements inside Actions):\n";
+  Hashtbl.iter (fun key value -> Printf.printf "%s: %d\n" key value) supported_types_counter;
 
   close_in ic;
